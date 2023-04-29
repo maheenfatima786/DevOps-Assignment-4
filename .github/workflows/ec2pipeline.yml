@@ -28,7 +28,7 @@ jobs:
             sudo systemctl start docker
             sudo gpasswd -a $USER docker
             sudo chown -R $USER:$USER /var/www/html
-            git clone https://github.com/hasnain-tahir/static-website.git
-            cd static-website/
+            git clone https://github.com/maheenfatima786/Static-Website.git
+            cd Static-Website/
             sudo docker build -t staticweb . 
             sudo docker run -d --restart=always -p 8080:80 staticweb:latest
