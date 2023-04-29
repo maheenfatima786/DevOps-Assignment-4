@@ -1,0 +1,34 @@
+name: Remote ssh command
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST_NAME }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo yum update -y
+            sudo yum install httpd -y
+            sudo amazon-linux-extras install php8.0 -y
+            sudo service httpd start
+            sudo service httpd status
+            sudo yum install git -y
+            sudo yum install docker -y
+            sudo systemctl start docker
+            sudo gpasswd -a $USER docker
+            sudo chown -R $USER:$USER /var/www/html
+            git clone https://github.com/hasnain-tahir/static-website.git
+            cd static-website/
+            sudo docker build -t staticweb . 
+            sudo docker run -d --restart=always -p 8080:80 staticweb:latest
